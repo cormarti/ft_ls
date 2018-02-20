@@ -57,8 +57,11 @@ void		prights(mode_t mode)
 void		plinks(nlink_t nlink, int maxlink)
 {
 	int		diff;
+	char	*name;
 
-	diff = ft_strlen(ft_itoa(nlink));
+	name = ft_itoa(nlink);
+	diff = ft_strlen(name);
+	free(name);
 	while (diff != maxlink)
 	{
 		ft_putstr(" ");
@@ -73,16 +76,21 @@ void		powners(struct stat sb, t_max *max)
 {
 	int		diff;
 	char	len;
+	char	*owner;
 
 	ft_putstr(getpwuid(sb.st_uid)->pw_name);
-	diff = ft_strlen(ft_strdup(getpwuid(sb.st_uid)->pw_name));
+	owner = ft_strdup(getpwuid(sb.st_uid)->pw_name);
+	diff = ft_strlen(owner);
+	free(owner);
 	while (diff < max->maxuid)
 	{
 		ft_putstr(" ");
 		diff++;
 	}
 	ft_putstr("  ");
-	diff = ft_strlen(ft_strdup(getgrgid(sb.st_gid)->gr_name));
+	owner = ft_strdup(getgrgid(sb.st_gid)->gr_name);
+	diff = ft_strlen(owner);
+	free(owner);
 	ft_putstr(getgrgid(sb.st_gid)->gr_name);
 	while (diff < max->maxgid)
 	{

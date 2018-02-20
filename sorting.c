@@ -22,15 +22,21 @@ char	**lexico_sort(char **args)
 	j = 0;
 	tmp = NULL;
 	if (args == NULL)
+	{
+		free(args);
 		return (NULL);
+	}
 	while (args[i])
 	{
 		j = i;
 		while (j > 0 && ft_strcmp(args[j], args[j - 1]) < 0)
 		{
 			tmp = ft_strdup(args[j]);
+			free(args[j]);
 			args[j] = ft_strdup(args[j - 1]);
+			free(args[j - 1]);
 			args[j - 1] = ft_strdup(tmp);
+			free(tmp);
 			j--;
 		}
 		i++;

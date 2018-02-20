@@ -92,3 +92,40 @@ t_file		*recursively_add_lists(t_file *f)
 	}
 	return (f);	
 }
+
+void		free_file(t_file **f)
+{
+	t_file	*curr;
+
+	curr = *f;
+	while (curr)
+	{
+		while (curr->next)
+			curr = curr->next;
+		if (curr->name)
+			free(curr->name);
+		if (curr->path)
+			free(curr->path);
+		if (curr->child)
+			free_file(&curr->child);
+		free(curr);
+		curr = *f;
+	}
+	free(*f);
+	*f = NULL;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

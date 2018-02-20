@@ -93,5 +93,6 @@ void	prights(mode_t mode);
 void	plinks(nlink_t nlink, int maxlink);
 void	powners(struct stat sb, t_max *max);
 void	finfo(t_file *f, char **args);
+void	free_file(t_file **f);
 
 #endif

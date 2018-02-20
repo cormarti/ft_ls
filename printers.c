@@ -37,6 +37,7 @@ void		plist(t_file *f)
 		ft_putstr("\n");
 		curr = curr->next;
 	}
+	free(max);
 }
 
 void		plist_all(t_file *f)
@@ -52,31 +53,37 @@ void		plist_all(t_file *f)
 //			printf("1%p\n", curr->child);
 		curr = curr->next;
 	}
+	free_file(&f);
 }
 
 int		pfiles(char **files)
 {
 	t_file		*f;
+	t_file		*curr;
 	t_max		*max;
 	int			i;
 
 	i = 0;
-	max = new_max();
-	f = new_file();
 	if (!(files) || files[i] == NULL)
 		return (0);
+	max = new_max();
+	f = new_file();
 	lstat(files[0], &(f->sb));
 	finfo(f, files);
 	if (optab[0].verif)
 		maxlengths_dir(f, max);
-	while (f)
+	curr = f;
+	while (curr)
 	{
 		if (optab[0].verif)
-			long_display(f, max);
+			long_display(curr, max);
 		ft_putstr(files[i]);
+		free(files[i]);
 		ft_putstr("\n");
-		f = f->next;
+		curr = curr->next;
 	}
-	free(f);
+	free(files);
+	free(max);
+	free_file(&f);
 	return (1);
 }

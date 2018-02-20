@@ -15,8 +15,11 @@
 void	psize(off_t size, int maxsize)
 {
 	int		diff;
+	char	*name;
 
-	diff = ft_strlen(ft_itoa(size));
+	name = ft_itoa(size);
+	diff = ft_strlen(name);
+	free(name);
 	ft_putstr("  ");
 	while (diff != maxsize)
 	{
@@ -59,14 +62,19 @@ void	pdate(time_t mtime)
 
 void	maxlengths_dir(t_file *f, t_max *max)
 {
-	t_file		*curr;
-	int			local_max[4];
+	t_file			*curr;
+	char			*name;
+	int				local_max[4];
 
 	curr = f;
 	while (curr)
 	{
-		local_max[0] = ft_strlen(ft_itoa(curr->sb.st_size));
-		local_max[2] = ft_strlen(ft_itoa(curr->sb.st_nlink));
+		name = ft_itoa(curr->sb.st_size);
+		local_max[0] = ft_strlen(name);
+		free(name);
+		name = ft_itoa(curr->sb.st_nlink);
+		local_max[2] = ft_strlen(name);
+		free(name);
 		local_max[3] = ft_strlen(getpwuid(curr->sb.st_uid)->pw_name);
 		local_max[1] = ft_strlen(getgrgid(curr->sb.st_gid)->gr_name);
 		if (local_max[0] > max->maxsize)

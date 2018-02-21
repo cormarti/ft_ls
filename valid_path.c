@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/13 11:50:07 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/17 08:29:35 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/21 07:20:03 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ static void		punvalid_path(char **args)
 	{
 		ft_putstr("ft_ls: ");
 		perror(args[i]);
+		free(args[i]);
 		i++;
 	}
+	free(args);
 }
 
 void			path_is_valid(int nb_arg, char **args)
@@ -30,10 +32,13 @@ void			path_is_valid(int nb_arg, char **args)
 	struct stat	sb;
 	int			i;
 	int			j;
-	char		*unvalid_path[nb_arg];
+	char		**unvalid_path;
 
 	i = 1;
 	j = 0;
+	if (!(unvalid_path = malloc(sizeof(char*) * (nb_arg + 1))))
+		exit(0);
+	unvalid_path[nb_arg] = NULL;
 	while (args[i] && args[i][0] == '-' && args[i][1])
 		i++;
 	while (args[i])
@@ -45,5 +50,6 @@ void			path_is_valid(int nb_arg, char **args)
 		}
 		i++;
 	}
+	unvalid_path[j] = NULL;
 	punvalid_path(lexico_sort(unvalid_path));
 }

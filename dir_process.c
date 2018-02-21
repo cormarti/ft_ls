@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/14 14:09:00 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/17 09:12:12 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/21 07:39:29 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ int		dir_process(char **paths)
 
 	i = 0;
 	if (!paths)
+		return (0);;
+	if (!paths[i])
+	{
+		free(paths);
 		return (0);
+	}
 	while (paths[i])
 	{
 		f = new_file();
@@ -30,7 +35,6 @@ int		dir_process(char **paths)
 			perror("error ");
 		closedir(dir);
 		free(paths[i]);
-		free_file(&f);
 		f = NULL;
 		i++;
 	}

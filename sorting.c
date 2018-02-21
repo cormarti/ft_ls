@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/13 12:42:43 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/18 23:36:21 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/21 11:36:19 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ char	**lexico_sort(char **args)
 	int			i;
 	int			j;
 
-	i = 1;
+	i = 0;
 	j = 0;
 	tmp = NULL;
-	if (args == NULL)
+	if (args == NULL || args[i] == NULL)
 	{
-		free(args);
-		return (NULL);
+		//free(args);
+		return (args);
 	}
 	while (args[i])
 	{
 		j = i;
-		while (j > 0 && ft_strcmp(args[j], args[j - 1]) < 0)
+		while (args[j] && j > 0 && ft_strcmp(args[j], args[j - 1]) < 0)
 		{
 			tmp = ft_strdup(args[j]);
 			free(args[j]);
@@ -44,6 +44,100 @@ char	**lexico_sort(char **args)
 	return (args);
 }
 
+t_file	*lexico_struct_sort(t_file *f)
+{
+	t_file	*curr;
+	t_file	*next;
+	t_file	*prev;
+	t_file	*test;
+
+	test = f;
+	while (test)
+	{
+		curr = f;
+		next = curr->next;
+		prev = NULL;
+		while (next)
+		{
+			if (ft_strcmp(curr->name, next->name) > 0)
+			{
+				if (curr == f)
+					f = next;
+				else
+					prev->next = next;
+				curr->next = next->next;
+				next->next = curr;
+				prev = next;
+				next = curr->next;
+			}
+			else
+			{
+				prev = curr;
+				curr = curr->next;
+				next = curr->next;
+			}
+		}
+		test = test->next;
+	}
+	return (f);
+}
+
+t_file	*modtime_struct_sort(t_file *f)
+{
+	t_file	*curr;
+	t_file	*next;
+	t_file	*prev;
+	t_file	*test;
+	struct stat	sb1;
+	struct stat	sb2;
+
+	test = f;
+	while (test)
+	{
+		curr = f;
+		next = curr->next;
+		prev = NULL;
+		while (next)
+		{
+			if (curr->sb.st_mtime < next->sb.st_mtime)
+			{
+				if (curr == f)
+					f = next;
+				else
+					prev->next = next;
+				curr->next = next->next;
+				next->next = curr;
+				prev = next;
+				next = curr->next;
+			}
+			else
+			{
+				prev = curr;
+				curr = curr->next;
+				next = curr->next;
+			}
+		}
+		test = test->next;
+	}
+	return (f);	
+}
+
+t_file	*reverse_sort(t_file *f)
+{
+	t_file	*prev;
+	t_file	*next;
+
+	prev = NULL;
+	while (f)
+	{
+		next = f->next;
+		f->next = prev;
+		prev = f;
+		f = next;
+	}
+	return (prev);
+}
+
 char	**modtime_sort(char **args)
 {
 	char		*tmp;
@@ -52,7 +146,7 @@ char	**modtime_sort(char **args)
 	struct stat	sb1;
 	struct stat	sb2;
 
-	i = 1;
+	i = 0;
 	j = 0;
 	tmp = NULL;
 	if (args == NULL)

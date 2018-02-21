@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/16 23:53:52 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/18 23:25:48 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/21 11:35:23 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@ int		dir_process(char **paths);
 int		files_process(DIR *dir, char *path, t_file *f);
 void	plist(t_file *f);
 int		file_push_back(t_file *f, DIR *dir, char *path);
-t_file	*recursively_add_lists(t_file *f);
-void	plist_all(t_file *f);
+void	recursively_add_lists(t_file *f);
+int		plist_all(t_file *f);
 t_file	*new_file(void);
 t_max	*new_max(void);
 void	long_display(t_file *f, t_max *max);
@@ -93,6 +93,9 @@ void	prights(mode_t mode);
 void	plinks(nlink_t nlink, int maxlink);
 void	powners(struct stat sb, t_max *max);
 void	finfo(t_file *f, char **args);
-void	free_file(t_file **f);
+void	free_file(t_file *f);
+t_file	*lexico_struct_sort(t_file *f);
+t_file	*reverse_sort(t_file *f);
+t_file	*modtime_struct_sort(t_file *f);
 
 #endif

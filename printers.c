@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/18 21:56:26 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/19 00:48:58 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/21 11:37:26 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,30 @@ void		plist(t_file *f)
 		ft_putstr("\n");
 		curr = curr->next;
 	}
-	free(max);
+	if (optab[0].verif)
+		free(max);
 }
 
-void		plist_all(t_file *f)
+int			plist_all(t_file *f)
 {
 	t_file	*curr;
 
+	if (f == NULL)
+		return (0);
+	f = lexico_struct_sort(f);
+	if (optab[4].verif)
+		f = modtime_struct_sort(f);
+	if (optab[3].verif)
+		f = reverse_sort(f);
 	curr = f;
 	plist(curr);
 	while (curr)
 	{
 		if (curr->child)
 			plist_all(curr->child);
-//			printf("1%p\n", curr->child);
 		curr = curr->next;
 	}
-	free_file(&f);
+	return (0);
 }
 
 int		pfiles(char **files)
@@ -64,26 +71,33 @@ int		pfiles(char **files)
 	int			i;
 
 	i = 0;
-	if (!(files) || files[i] == NULL)
+	if (!(files))
 		return (0);
+	if (files[i] == NULL)
+	{
+		free(files);
+		return (0);
+	}
 	max = new_max();
 	f = new_file();
-	lstat(files[0], &(f->sb));
+	lstat(files[i], &(f->sb));
 	finfo(f, files);
 	if (optab[0].verif)
 		maxlengths_dir(f, max);
 	curr = f;
-	while (curr)
+	while (f)
 	{
+		curr = f;
+		f = f->next;
 		if (optab[0].verif)
 			long_display(curr, max);
 		ft_putstr(files[i]);
 		free(files[i]);
 		ft_putstr("\n");
-		curr = curr->next;
+		free_file(curr);
 	}
 	free(files);
+	free(f);
 	free(max);
-	free_file(&f);
 	return (1);
 }

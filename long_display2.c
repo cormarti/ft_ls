@@ -6,33 +6,59 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/17 10:45:01 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/19 00:48:04 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/28 12:36:34 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	psize(off_t size, int maxsize)
+void	plink_path(t_file *f, int target)
 {
-	int		diff;
-	char	*name;
+	char	buf[255];
+	size_t	len;
+	char	*path;
 
-	name = ft_itoa(size);
+	ft_putstr(" -> ");
+	if (!target)
+		len = readlink(f->name, buf, 255);
+	else
+	{
+		path = ft_strjoin(f->path, "/");
+		path = ft_strjoinf(path, f->name, 1);
+		len = readlink(path, buf, 255);
+		free(path);
+	}
+	buf[len] = '\0';
+	ft_putstr(buf);
+}
+
+void	psize(struct stat sb, int maxsize)
+{
+	int			diff;
+	char		*name;
+
+	if (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))
+	{
+		name = ft_itoa(major(sb.st_rdev));
+		name = ft_strjoinf(name, ", ", 1);
+		name = ft_strjoinf(name, ft_itoa(minor(sb.st_rdev)), 3);
+	}
+	else
+		name = ft_itoa(sb.st_size);
 	diff = ft_strlen(name);
-	free(name);
 	ft_putstr("  ");
-	while (diff != maxsize)
+	while (diff < maxsize)
 	{
 		ft_putstr(" ");
 		diff++;
 	}
-	ft_putnbr(size);
+	ft_putstr(name);
+	free(name);
 }
 
 void	pdate(time_t mtime)
 {
 	struct tm	*tinfo;
-	int 		diff;
 
 	tinfo = localtime(&mtime);
 	ft_putstr(" ");
@@ -42,8 +68,7 @@ void	pdate(time_t mtime)
 		ft_putstr(" ");
 	ft_putnbr(tinfo->tm_mday);
 	ft_putstr(" ");
-	if (mtime < ((unsigned long)time(NULL) + 15552000)
-		&& mtime > ((unsigned long)time(NULL) - 15552000))
+	if (mtime < (time(NULL) + 15552000) && mtime > (time(NULL) - 15552000))
 	{
 		if (tinfo->tm_hour < 10)
 			ft_putstr("0");
@@ -60,35 +85,56 @@ void	pdate(time_t mtime)
 	}
 }
 
-void	maxlengths_dir(t_file *f, t_max *max)
+int		owner_maxlength(t_file *f, int owner)
 {
-	t_file			*curr;
-	char			*name;
-	int				local_max[4];
+	char	*tmp;
+	int		len;
+
+	if (owner == 0)
+	{
+		if (getpwuid(f->sb.st_uid))
+			len = ft_strlen(getpwuid(f->sb.st_uid)->pw_name);
+		else
+		{
+			tmp = ft_itoa(f->sb.st_uid);
+			len = ft_strlen(tmp);
+			free(tmp);
+		}
+		return (len);
+	}
+	if (getgrgid(f->sb.st_gid))
+		len = ft_strlen(getgrgid(f->sb.st_gid)->gr_name);
+	else
+	{
+		tmp = ft_itoa(f->sb.st_gid);
+		len = ft_strlen(tmp);
+		free(tmp);
+	}
+	return (len);
+}
+
+void	maxlengths_dir(t_file *f, t_max *max, int isdir)
+{
+	t_file		*curr;
+	char		*name;
+	int			lmax[4];
 
 	curr = f;
 	while (curr)
 	{
-		name = ft_itoa(curr->sb.st_size);
-		local_max[0] = ft_strlen(name);
-		free(name);
+		lmax[0] = filesize_length(curr->sb);
 		name = ft_itoa(curr->sb.st_nlink);
-		local_max[2] = ft_strlen(name);
+		lmax[2] = ft_strlen(name);
 		free(name);
-		local_max[3] = ft_strlen(getpwuid(curr->sb.st_uid)->pw_name);
-		local_max[1] = ft_strlen(getgrgid(curr->sb.st_gid)->gr_name);
-		if (local_max[0] > max->maxsize)
-			max->maxsize = local_max[0];
-		if (local_max[2] > max->maxlink)
-			max->maxlink = local_max[2];
-		if (local_max[3] > max->maxuid)
-			max->maxuid = local_max[3];
-		if (local_max[1] > max->maxgid)
-			max->maxgid = local_max[1];
+		lmax[3] = owner_maxlength(curr, 0);
+		lmax[1] = owner_maxlength(curr, 1);
+		lmax[1] = ft_strlen(getgrgid(curr->sb.st_gid)->gr_name);
+		max->maxsize = lmax[0] > max->maxsize ? lmax[0] : max->maxsize;
+		max->maxlink = lmax[2] > max->maxlink ? lmax[2] : max->maxlink;
+		max->maxuid = lmax[3] > max->maxuid ? lmax[3] : max->maxuid;
+		max->maxgid = lmax[1] > max->maxgid ? lmax[1] : max->maxgid;
 		curr = curr->next;
 	}
-	ft_putstr("total ");
-	ft_putnbr(f->sb.st_blocks);
-	ft_putstr("\n");
+	if (isdir)
+		ptotal_blocks(f);
 }
-

@@ -6,13 +6,14 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 22:58:04 by cormarti          #+#    #+#             */
-/*   Updated: 2017/11/14 16:54:05 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/22 18:49:32 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include <stdlib.h>
 # include <string.h>
 
 typedef	struct s_list	t_list;
@@ -89,5 +90,6 @@ char	*ft_strtrim(char const *s);
 void	ft_swap(int *a, int *b);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
+char	*ft_strjoinf(char *s1, char *s2, int tofree);
 
 #endif

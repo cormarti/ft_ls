@@ -1,49 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dir_process.c                                      :+:      :+:    :+:   */
+/*   printers2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/14 14:09:00 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/27 13:25:56 by cormarti         ###   ########.fr       */
+/*   Created: 2018/02/27 13:44:04 by cormarti          #+#    #+#             */
+/*   Updated: 2018/02/27 14:49:34 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int		dir_process(char **paths)
+void	pfile_details(t_file *f, t_max *max)
 {
-	DIR		*dir;
-	t_file	*f;
+	if (optab[0].verif)
+		long_display(f, max);
+	else
+		ft_putstr(f->name);
+	ft_putstr("\n");
+}
+
+void	spfile_details(t_file *f, char **files, t_max *max)
+{
+	t_file	*curr;
 	int		i;
 
 	i = 0;
-	if (!paths)
-		return (0);
-	while (paths[i])
+	curr = f;
+	while (curr)
 	{
-		f = new_file();
-		if (!(dir = opendir(paths[i])))
-			error_handler(f, paths[i]);
+		if (optab[0].verif)
+			long_display(curr, max);
 		else
-		{
-			ft_putstr("\n");
-			files_process(dir, paths[i], f);
-			closedir(dir);
-		}
-		free(paths[i]);
+			ft_putstr(files[i]);
+		free(files[i]);
 		i++;
-		f = NULL;
+		ft_putstr("\n");
+		if (!(curr->next) && optab[0].verif && curr->name)
+			free(max);
+		curr = curr->next;
 	}
-	free(paths);
-	return (1);
-}
-
-void	error_handler(t_file *f, char *path)
-{
-	set_error(f, path);
-	ppath(f, path, path, 0);
-	print_error(f);
-	free_file(f);
 }

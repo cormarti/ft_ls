@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/13 11:50:07 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/21 07:20:03 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/27 14:14:01 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void		punvalid_path(char **args)
 {
-	int		i;
+	int			i;
 
 	i = 0;
 	while (args[i])
@@ -42,7 +42,7 @@ void			path_is_valid(int nb_arg, char **args)
 	while (args[i] && args[i][0] == '-' && args[i][1])
 		i++;
 	while (args[i])
-	{	
+	{
 		if (lstat(args[i], &sb) != 0)
 		{
 			unvalid_path[j] = ft_strdup(args[i]);
@@ -51,5 +51,5 @@ void			path_is_valid(int nb_arg, char **args)
 		i++;
 	}
 	unvalid_path[j] = NULL;
-	punvalid_path(lexico_sort(unvalid_path));
+	punvalid_path(lexico_sort(unvalid_path, 0));
 }

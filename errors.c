@@ -1,26 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ls.c                                            :+:      :+:    :+:   */
+/*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/13 00:26:09 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/26 22:43:38 by cormarti         ###   ########.fr       */
+/*   Created: 2018/02/23 23:48:13 by cormarti          #+#    #+#             */
+/*   Updated: 2018/02/27 07:06:19 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-#include "extab.h"
 
-int		main(int argc, char **argv)
+void		print_error(t_file *f)
 {
-	int		i;
+	if (f->error)
+	{
+		ft_putstr("ft_ls: ");
+		ft_putstr(f->name);
+		ft_putstr(": ");
+		ft_putstr(strerror(f->error));
+		ft_putstr("\n");
+	}
+}
 
-	i = 0;
-	parse_opt(argc, argv);
-	path_is_valid(argc, argv);
-	pfiles(extract_nodir(argc, argv));
-	dir_process(extract_dir(argc, argv));
-	return (0);
+void		set_error(t_file *f, char *name)
+{
+	char	*realname;
+
+	realname = extract_deep_dir(name);
+	f->error = errno;
+	f->name = ft_strdup(realname);
+	free(realname);
 }

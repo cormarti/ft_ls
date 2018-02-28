@@ -6,7 +6,7 @@
 /*   By: cormarti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/18 18:16:14 by cormarti          #+#    #+#             */
-/*   Updated: 2018/02/18 23:38:47 by cormarti         ###   ########.fr       */
+/*   Updated: 2018/02/24 06:31:21 by cormarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ t_file	*new_file(void)
 	file->next = NULL;
 	file->child = NULL;
 	file->name = NULL;
-	file->type = NULL;
 	file->path = NULL;
 	file->dt = NULL;
+	file->error = 0;
 	return (file);
 }
 
@@ -54,6 +54,7 @@ void	finfo(t_file *f, char **files)
 			curr = curr->next;
 		node = new_file();
 		lstat(files[i], &(node->sb));
+		node->name = ft_strdup(files[i]);
 		curr->next = node;
 		i++;
 	}
